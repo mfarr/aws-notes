@@ -1,3 +1,4 @@
+**Note**: ($) = Exam Tip
 
 ## Introduction to DynamoDB
 
@@ -50,7 +51,7 @@
 * Query - find items in table based on primary key attribute and a distinct value to search for
 	* Refine by using an optional sort key name
 	* By default, query returns all attributes but the `ProjectionExpression` parameter can be used to specify attributes to be returned
-	* Always sorted by sort key, default ascending. `ScanIndexForward = false` to reverse order
+	* Always sorted by sort key, default ascending. `ScanIndexForward = false` to reverse order (can't use this option with scans!)
 * Scan - Examines every item in the table
 	* By default returns all attributes, use the `ProjectionExpression` parameter to specify attributes to return
 * Query is more efficient than a scan
@@ -67,6 +68,7 @@
 
 * Set a smaller page size
 	* Running a larger number of smaller operations will allow other requests to succeed without throttling
+* Use parallel scans rather than the default sequential scan
 * **Avoid Scans!**
 	* Design tables in a way that you can use the `Query`, `Get`, or `BatchGetItem` APIs
 
@@ -171,4 +173,27 @@
 * Expired items marked for deletion within next 48 hours
 * Great for removing old or irrelevant data (eg. session data, event logs, temporary data)
 * Reduces cost by automatically removing old data
-* 
+
+## DynamoDB Streams
+
+* ($) Time ordered sequence of item level modifications (eg. insert, update, delete)
+* ($) Logs - encrypted at rest and stored for **24 hours**
+* Accessed using a dedicated endpoint
+* By default, the primary key is  recorded
+* Before and after images can be captured
+* Use cases
+	* Audit or archive transactions
+	* Trigger an even based on a particular transaction
+	* Replicate data across multiple tables
+* Events logged in near real-time
+	* ($) Apps can take actions based on contents of the stream
+	* ($) Can be used as a Lambda event source
+
+## Provisioned Throughput and Exponential Backoff
+
+* ($) ``ProvisionedThroughputExceededException`` - Request rate is too high for the read/write capacity provisioned on DynamoDB table
+* ($) Using SDK? SDK will automatically retry the requests until successful using exponential backoff
+* Not using SDK? Reduce request frequency by using *exponential backoff*
+* Exponential Backoff - use progressively longer waits between failed retries
+	* If after 1 minute this doesn't work, request size may be exceeding the throughput for the read/write capacity
+	* ($) Better flow control
