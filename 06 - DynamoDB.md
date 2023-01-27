@@ -83,4 +83,92 @@
 
 ## Using DynamoDB API Calls
 
+* Programatically interact with DynamoDB
+* Common CLI commands
+	* create-table
+	* put-item (put or replaces)
+	* get-item
+	* update-item
+	* update-table
+	* list-tables
+	* describe-table
+	* scan
+	* query
+	* delete-item
+	* delete-table
+* Should understand these calls at a high level, differences between them and IAM permissions needed
+
+### Exam Tips
+
+* When to use each command listed and what they're used for
+* CLI commands are making calls to a DynamoDB API
+* Correct IAM permissions required to make an API call
+
+## DynamoDB Provisioned Throughput
+
+* Measured in Capacity Units
+* Specify requirements when creating table in terms of read and write capacity units
+* Write Capacity Unit - 1x write capacity unit = 1 x 1KB write per second
+* Read Capacity Unit - 1x read capacity unit = 1 x strongly consistent read of 4KB per second
+	**or** 2 x eventually consistent reads of 4KB per second (default)
+
+### Exam Tips
+
+* Provisioned throughput is measured in capacity units
+* See above for read/write units
+
+## DynamoDB On-Demand Capacity
+
+* Pricing model - charges apply for reading, writing, storing data
+* DynamoDB will instantly scale up and down based on the activity of your application
+* Great for: 
+	* unpredictable workloads
+	* new apps where you don't know the usage patterns
+	* when you want to pay for only what you use (pay per request)
+* Which model should I use?
+	* On-Demand Capacity
+		* Unknown workloads
+		* Unpredictable application traffic
+		* Spiky, short-lived peaks
+		* A pay-per-use model is desired
+		* It might be more difficult to predict the cost
+	* Provisioned Capacity
+		* Read/write capacity requirements can be forecasted
+		* Predictable application traffic
+		* App traffic is consistent or increases gradually
+		* You have more control over the cost
+
+### Exam Tips
+
+* Understand the difference, know when to use each pricing model
+
+## DynamoDB Accelerator (DAX)
+
+* A fully-managed, clustered in-memory cache for DynamoDB
+* Read-heavy workloads (auctions, gaming, retail during holidays)
+* Write-through caching service - data is written to DAX and DynamoDB at the same time
+* Point app API calls to DAX cluster. If cache miss, DAX performs eventually consistent read on DynamoDB
+* Reduces read load on DynamoDB tables
+	* May be able to reduce provisioned read capacity and reduce bill
+* When isn't it suitable?
+	* Only uses eventually consistent reads, not strongly consistent
+	* Mainly write-intensive applications
+	* Apps that don't perform many read apps
+	* Don't require microsecond response times
+
+### Exam Tips
+
+* In-Memory cache
+* Improves response for eventually consistent reads only
+* Data written to cache and DB at the same time
+* Point API calls at DAX cluster, not table
+* Cache miss results in eventually consistent read from DB
+* Not suitable for write-intensive apps or ones that require strongly consistent reads
+
+## DynamoDB TTL
+
+* Defines an expiry time for your data
+* Expired items marked for deletion within next 48 hours
+* Great for removing old or irrelevant data (eg. session data, event logs, temporary data)
+* Reduces cost by automatically removing old data
 * 
